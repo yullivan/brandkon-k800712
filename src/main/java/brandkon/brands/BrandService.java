@@ -12,9 +12,9 @@ public class BrandService {
     @Autowired
     private BrandRepository brandRepository;
 
-    public List<BrandDTO> getBrandsByCategory(String category) {
+    public List<BrandDTO> getBrandsByCategory(Long category) {
         List<Brand> brands = (category != null) ?
-                brandRepository.findByCategory(category) :
+                brandRepository.findByCategoryId(category) :
                 brandRepository.findAll();
         return brands.stream()
                 .map(this::convertToDTO)

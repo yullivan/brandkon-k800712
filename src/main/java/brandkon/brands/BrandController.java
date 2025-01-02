@@ -14,7 +14,8 @@ public class BrandController {
     private BrandService brandService;
 
     @GetMapping
-    public ResponseEntity<List<BrandDTO>> getBrandsByCategory(@RequestParam(required = false) String category) {
+    public ResponseEntity<List<BrandDTO>> getBrandsByCategory(@RequestParam(required = false) Long category) {
+
         return ResponseEntity.ok(brandService.getBrandsByCategory(category));
     }
 

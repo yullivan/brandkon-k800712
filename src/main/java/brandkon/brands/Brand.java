@@ -1,6 +1,5 @@
 package brandkon.brands;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,15 +13,19 @@ public class Brand {
     private String name;
     private String imageUrl;
     private String guidelines;
-    private String category;
+    private Long categoryId;
 
-    public String getCategory() {
-        return category;
+
+    public Brand() {}
+
+    public Brand(Long id, String name, String imageUrl, Long categoryId, String guidelines) {
+        this.id = id;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.categoryId = categoryId;
+        this.guidelines = guidelines;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
 
     public Long getId() {
         return id;
@@ -56,5 +59,11 @@ public class Brand {
         this.guidelines = guidelines;
     }
 
+    public Long getCategoryId() {
+        return categoryId;
+    }
 
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
 }

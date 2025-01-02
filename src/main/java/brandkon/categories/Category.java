@@ -15,6 +15,17 @@ public class Category {
     private String slug;
     private String imageUrl;
 
+
+    public Category() {}
+
+    public Category(Long id, String name, String slug, String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.slug = slug;
+        this.imageUrl = imageUrl;
+    }
+
+
     public Long getId() {
         return id;
     }
