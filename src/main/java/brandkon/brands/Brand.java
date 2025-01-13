@@ -1,31 +1,44 @@
 package brandkon.brands;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import brandkon.categories.Category;
+import jakarta.persistence.*;
 
 @Entity
 public class Brand {
+    public Brand() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
+
+    @Column(name = "image_url")
     private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     private String guidelines;
-    private Long categoryId;
 
 
-    public Brand() {}
-
-    public Brand(Long id, String name, String imageUrl, Long categoryId, String guidelines) {
-        this.id = id;
+    public Brand(String name, String imageUrl, Category category, String guidelines) {
         this.name = name;
         this.imageUrl = imageUrl;
-        this.categoryId = categoryId;
+        this.category = category;
         this.guidelines = guidelines;
     }
 
+    public String getGuidelines() {
+        return guidelines;
+    }
+
+    public void setGuidelines(String guidelines) {
+        this.guidelines = guidelines;
+    }
 
     public Long getId() {
         return id;
@@ -51,19 +64,11 @@ public class Brand {
         this.imageUrl = imageUrl;
     }
 
-    public String getGuidelines() {
-        return guidelines;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setGuidelines(String guidelines) {
-        this.guidelines = guidelines;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

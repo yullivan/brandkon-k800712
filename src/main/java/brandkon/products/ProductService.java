@@ -1,55 +1,67 @@
 package brandkon.products;
 
 import brandkon.ResourceNotFoundException;
-import brandkon.brands.BrandDTO;
-import brandkon.brands.BrandDetailDTO;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public List<ProductDTO> getProducts(Long brandId) {
-        List<Product> products = (brandId != null) ?
-                productRepository.findByBrandId(brandId) :
-                productRepository.findAll();
+        logger.info("Fetching products for brandId: {}", brandId);
+        List<Product> products;
+        if (brandId != null) {
+            products = productRepository.findByBrandId(brandId);
+            if (products.isEmpty()) {
+                logger.warn("No products found for brandId: {}", brandId);
+            }
+        } else {
+            products = productRepository.findAll();
+        }
+        logger.info("Found {} products for brandId: {}", products.size(), brandId);
         return products.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ProductDTO> getPopularProducts(Long categoryId, Long brandId) {
+        logger.info("Fetching popular products for categoryId: {}, brandId: {}", categoryId, brandId);
+        PageRequest pageRequest = PageRequest.of(0, 5);
         List<Product> popularProducts;
 
         if (categoryId != null) {
-
-            popularProducts = productRepository.findPopularByCategoryId(categoryId);
+            popularProducts = productRepository.findPopularByCategoryId(categoryId, pageRequest);
         } else if (brandId != null) {
-
-            popularProducts = productRepository.findPopularByBrandId(brandId);
+            popularProducts = productRepository.findPopularByBrandId(brandId, pageRequest);
         } else {
-
-            popularProducts = new ArrayList<>(); // 빈 리스트 반환 또는 다른 로직 추가
+            popularProducts = productRepository.findAllByOrderByPopularityDesc(pageRequest);
         }
 
+        logger.info("Found {} popular products", popularProducts.size());
         return popularProducts.stream()
-                .limit(5)
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-
+    public Product getProductByName(String name) {
+        return productRepository.findByProductName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with name: " + name));
+    }
 
     public ProductDetailDTO getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
         return convertToDetailDTO(product);
     }
 
@@ -67,11 +79,9 @@ public class ProductService {
                 product.getId(),
                 product.getProductName(),
                 product.getPrice(),
-                new BrandDTO(product.getBrand().getId(),
-                        product.getBrand().getName(),
-                        product.getBrand().getImageUrl()),
-                product.getExpirationDays()
+                product.getExpirationDays(),
+                product.getBrand().getId(),
+                product.getBrand().getName()
         );
     }
 }
-

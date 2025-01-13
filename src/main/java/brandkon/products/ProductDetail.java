@@ -49,5 +49,5 @@ public class ProductDetail {
         this.expirationDays = expirationDays;
     }
 
-// Getters and setters
+
 }

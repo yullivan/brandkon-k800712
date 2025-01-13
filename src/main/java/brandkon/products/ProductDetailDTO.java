@@ -1,10 +1,10 @@
 package brandkon.products;
 
-import brandkon.brands.BrandDTO;
-
-public record ProductDetailDTO(Long productId,
-                               String productName,
-                               int price,
-                               BrandDTO brand,
-                               int expirationDays) {
-}
+public record ProductDetailDTO(
+        Long id,
+        String productName,
+        int price,
+        int expirationDays,
+        Long brandId,
+        String brandName
+) {}
